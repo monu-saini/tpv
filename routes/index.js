@@ -5,7 +5,9 @@ var express = require('express'),
     path = require('path');
 
 const Config = require('config'),
-    Spanwgo = require('../SpanwgoCustomize');
+    Spanwgo = require('../SpanwgoCustomize'),
+    DB = require('../models'),
+    fs = require('fs');
 
 
 let connectingJSON = {

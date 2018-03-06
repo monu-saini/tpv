@@ -1,7 +1,7 @@
 module.exports = {
   apps : [
       {
-        name: "travel_app",
+        name: "tpv",
         script: "./bin/www",
         node_args: "--max_old_space_size=4096",
         watch: false,

@@ -13,7 +13,6 @@ Spanwgo.prototype = {
   'import': function (file) {
     let options = Object.assign({}, this.config, {'file': file})
     let querySring = QUERY['import'](options).split(' ');
-    console.log('querySring', querySring)
     return SPAWN('mongoimport', querySring)
   },
 
