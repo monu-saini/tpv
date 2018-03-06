@@ -67,7 +67,7 @@ let auth = require('./authentication'),
     }),
     upload = multer({ storage: storage });
 
-router.post('/saveDataInDB', upload.single('file'), function(req, res) {
+router.post('/saveDataInDB',  auth.authenticate, upload.single('file'), function(req, res) {
     let data = req.body;
     if (req.file) {
         let filePath = path.join(process.cwd(), req.file.path);
