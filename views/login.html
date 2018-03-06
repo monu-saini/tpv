@@ -1,0 +1,59 @@
+{% extends "index.html" %}
+{% block content %}
+<div id="page-wrapper" class="sign-in-wrapper">
+    <div class="graphs">
+        <div class="sign-in-form">
+            <div class="sign-in-form-top">
+                <p><span>Sign In to</span> <a href="/">TPV Software</a></p>
+            </div>
+            <div class="signin">
+                <form id="signinForm" role="form" action="/admin-signin" method="POST">
+                    <div class="log-input">
+                        <div class="log-input-left">
+                            <input type="text" class="user" name="email" id="email"/>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>
+                    <div class="log-input">
+                        <div class="log-input-left">
+                            <input type="password" class="lock" name="password" id="password"/>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>
+                    <input type="submit" value="Login to your account">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script type="text/javascript">
+    $(function () {
+        $("#signinForm").submit(function (event) {
+            event.preventDefault();
+            // $('#login-error').innerHtml = '';
+            let values = {},
+                action = event.target.action;
+            $.each($('#signinForm').serializeArray(), function (i, field) {
+                values[field.name] = field.value;
+            });
+            $.ajax({
+                type: "POST",
+                url: action,
+                data: values,
+                success: function (response) {
+                    document.cookie = `Authorization=${response.prefix} ${response.token}`;
+                    window.location.pathname = '/';
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    if (XMLHttpRequest && XMLHttpRequest.responseJSON) {
+                        $.notify(XMLHttpRequest.responseJSON.message, "error");
+                    }
+                }
+            });
+        });
+    });
+
+</script>
+{% endblock %}

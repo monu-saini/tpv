@@ -1,0 +1,7 @@
+{
+    "JWT": {
+        "secret": "tR9dxtrwZkDpZeS4",
+        "prefix": "JWT",
+        "expire": 7200
+    }
+}

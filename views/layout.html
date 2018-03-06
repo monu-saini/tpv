@@ -1,0 +1,30 @@
+{% extends "index.html" %}
+{% block content %}
+    {% include 'side-bar.html' %}
+    <div class="main-content">
+        {% include 'header.html' %}
+        <div id="page-wrapper">
+            {% block innerContent %}{% endblock %}
+        </div>    
+    </div>    
+{% endblock %}
+{% block script %}
+    <script type="text/javascript">
+        $(function () {
+            $("#logout-button").click(function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+                let action = window.location.origin + '/logout';
+                $.ajax({
+                    type: "GET",
+                    url: action,
+                    success: function (response) {
+                        window.location.pathname = '/login';
+                    }
+                });
+            });
+        });
+    </script>
+    {% block innerScript %}
+    {% endblock %}
+{% endblock %}

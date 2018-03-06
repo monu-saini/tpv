@@ -1,0 +1,25 @@
+{% extends "layout.html" %} {% block innerContent %}
+<div class="graphs">
+    <h3 class="blank1">Users List</h3>
+    <div class="xs tabls">
+        <div class="bs-example4" data-example-id="contextual-table">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in data %}
+                        <tr>
+                             <td>{{ loop.index }}</td>
+                            <td>{{ item.email }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

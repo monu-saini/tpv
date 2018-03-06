@@ -1,0 +1,77 @@
+{% extends "layout.html" %} {% block innerContent %}
+<div class="graphs">
+    <h3 class="blank1">Create User</h3>
+    <div class="bs-example4">
+        <form class="form-horizontal" id="createUser" action="/signup">
+            <div class="form-group">
+                <label class="control-label col-sm-3" for="email">Email:</label>
+                <div class="col-sm-8">
+                    <div class="input-group input-group1">
+                        <span class="input-group-addon"><i class="fa fa-envelope-o"></i></span>
+                        <input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-3" for="firstName">First Name:</label>
+                <div class="col-sm-8">
+                    <div class="input-group input-group1">
+                        <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                        <input type="text" class="form-control" id="firstName" placeholder="Enter First Name" name="firstName">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-3" for="lastName">Last Name:</label>
+                <div class="col-sm-8">
+                    <div class="input-group input-group1">
+                        <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                        <input type="text" class="form-control" id="lastName" placeholder="Enter Last Name" name="lastName">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-9">
+                    <button type="submit" class="btn btn-default">Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+{% block innerScript %}
+<script type="text/javascript">
+    $(function () {
+        $("#createUser").submit(function (event) {
+            event.preventDefault();
+            // $('#login-error').innerHtml = '';
+            let values = {},
+                action = event.target.action;
+            $.each($('#createUser').serializeArray(), function (i, field) {
+                values[field.name] = field.value;
+            });
+            
+            if(!($('#email').val())) {
+                alert('Email is required.')
+            }
+            
+            $.ajax({
+                type: "POST",
+                url: action,
+                data: values,
+                success: function (response) {
+                    alert('New User Added Successfully. Try One More.');
+                     $('#createUser')[0].reset();
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    if (XMLHttpRequest && XMLHttpRequest.responseJSON) {
+                        $.notify(XMLHttpRequest.responseJSON.message, "error");
+                    }
+                }
+            });
+        });
+    });
+
+</script>
+{% endblock %}
