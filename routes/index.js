@@ -74,12 +74,11 @@ router.post('/saveDataInDB', upload.single('file'), function(req, res) {
         helperFunctions
             .importCSVTOMongo(filePath)
             .then((result) => {
-                console.log('Result: ', result)
-                helperFunctions.removeFile();
+                helperFunctions.removeFile(filePath);
             })
             .catch((err) => {
                 console.log('Error Importing File:', err);
-                helperFunctions.removeFile();
+                helperFunctions.removeFile(filePath);
             })
         res.status(200).send({
             success: true,
