@@ -68,42 +68,42 @@ let auth = require('./authentication'),
     upload = multer({ storage: storage });
 
 router.post('/saveDataInDB', upload.single('file'), function(req, res) {
-    // let data = req.body;
-    // if (req.file) {
-    //     let filePath = path.join(process.cwd(), req.file.path);
-    //     helperFunctions
-    //         .importCSVTOMongo(filePath)
-    //         .then((result) => {
-    //             helperFunctions.removeFile(filePath);
-    //         })
-    //         .catch((err) => {
-    //             console.log('Error Importing File:', err);
-    //             helperFunctions.removeFile(filePath);
-    //         })
-    //     res.status(200).send({
-    //         success: true,
-    //         data: "File is uploaded successfully. Now we are processing the file."
-    //     })
-    // } else {
-    //     res.status(500).send({
-    //         success: false,
-    //         message: 'Unable to upload file.'
-    //     })
-    // }
-
-    DB
-      .ProductSchema
-      .insertMany(data)
-      .then(() => {
-        console.log('All documennts inserted successfully.')
+    let data = req.body;
+    if (req.file) {
+        let filePath = path.join(process.cwd(), req.file.path);
+        helperFunctions
+            .importCSVTOMongo(filePath)
+            .then((result) => {
+                helperFunctions.removeFile(filePath);
+            })
+            .catch((err) => {
+                console.log('Error Importing File:', err);
+                helperFunctions.removeFile(filePath);
+            })
         res.status(200).send({
-          message: 'All Data Saved Successfully.'
-        });
-      })
-      .catch((err) => {
-        console.log('[Error Inserting Documents.]', err);
-        res.status(500).send(err);
-      })
+            success: true,
+            data: "File is uploaded successfully. Now we are processing the file."
+        })
+    } else {
+        res.status(500).send({
+            success: false,
+            message: 'Unable to upload file.'
+        })
+    }
+
+    // DB
+    //   .ProductSchema
+    //   .insertMany(req.body)
+    //   .then(() => {
+    //     console.log('All documennts inserted successfully.')
+    //     res.status(200).send({
+    //       message: 'All Data Saved Successfully.'
+    //     });
+    //   })
+    //   .catch((err) => {
+    //     console.log('[Error Inserting Documents.]', err);
+    //     res.status(500).send(err);
+    //   })
 });
 
 router.get('/getCategories', auth.authenticate, function(req, res) {
