@@ -10,9 +10,18 @@ let Spanwgo = function (options) {
 }
 
 Spanwgo.prototype = {
-  'import': function (file) {
+  'import': function (file, str, isUpsert) {
+
+    console.log("srt : " ,str,"       isUpsert :",isUpsert)
+
     let options = Object.assign({}, this.config, {'file': file})
     let querySring = QUERY['import'](options).split(' ');
+    if(isUpsert == true){
+      let key = str;
+      let upsertFilds = '--upsertFields';
+      querySring.splice(8, 0, upsertFilds, key);
+    }
+   // console.log('querySring querySring :::::: ', querySring)
     return SPAWN('mongoimport', querySring)
   },
 

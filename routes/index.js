@@ -21,7 +21,10 @@ let helperFunctions = {
         return new Promise((resolve, reject) => {
             try {
                 let output = '',
-                    childProcess = mongonaut.import(filepath);
+                    key = "Product_Code",
+                    isUpsert = true,
+                    // childProcess = mongonaut.import(filepath);
+                    childProcess = mongonaut.import(filepath, key, isUpsert);
 
                 childProcess.stderr.on('data', function(data) {
                     output += data
@@ -191,49 +194,165 @@ router.get('/getProductGroups', auth.authenticate, function(req, res) {
         })
 });
 
-router.get('/getProducts', auth.authenticate, function(req, res) {
-    let groupId = req.query.groupId;
+// router.get('/getProducts', auth.authenticate, function(req, res) {
+//     let groupId = req.query.groupId;
 
-    if (!groupId) {
-        return res.status(400).send({
-            message: 'Missing Fields.',
-            success: false
-        })
+//     if (!groupId) {
+//         return res.status(400).send({
+//             message: 'Missing Fields.',
+//             success: false
+//         })
+//     }
+
+//     DB
+//         .ProductSchema
+//         .find({
+//             "Product_Group": parseInt(groupId)
+//         }, {
+//             "Product_Category_Code": false,
+//             "Product_Category_Name": false,
+//             "Product_Group": false,
+//             "Product_Group_Name": false,
+//             "__v": false
+//         })
+//         .then((result) => {
+//             result = JSON.parse(JSON.stringify(result));
+
+//             if (result.length === 0) {
+//                 return res.status(200).send({
+//                     message: 'No products in this product group.',
+//                     success: false
+//                 });
+//             }
+
+//             res.status(200).send({
+//                 success: true,
+//                 data: result
+//             });
+//         })
+//         .catch((err) => {
+//             console.log('[Error In Finding distinct Product.]', err);
+//             res.status(500).send({
+//                 success: false,
+//                 message: err
+//             });
+//         })
+// });
+
+router.get('/getProducts', function (req, res) {
+    let groupId = req.query.groupId,
+        searchString = req.query.text;
+    
+    if(!groupId) {
+       return res.status(400).send({
+         message: 'Missing Fields.',
+         success: false
+       })
     }
-
+    
+    let filter = {
+        "Product_Group": parseInt(groupId)
+    };
+    
+    if (searchString) {
+      let regex = new RegExp(req.query.text, 'i')
+      filter['$or'] = [
+        { NOBB: regex },
+        { Description: regex },
+        { Description_2: regex },
+        { Storageunit: regex },
+        { Billingunit: regex },
+        { Product_Category_Name: regex },
+        { Product_Group_Name: regex },
+        { Product_Name: regex }
+      ]
+    }
+  
     DB
-        .ProductSchema
-        .find({
-            "Product_Group": parseInt(groupId)
-        }, {
-            "Product_Category_Code": false,
-            "Product_Category_Name": false,
-            "Product_Group": false,
-            "Product_Group_Name": false,
-            "__v": false
-        })
-        .then((result) => {
-            result = JSON.parse(JSON.stringify(result));
-
-            if (result.length === 0) {
-                return res.status(200).send({
+      .ProductSchema
+      .find(filter,{
+        "Product_Category_Code": false,
+          "Product_Category_Name": false,
+        "Product_Group": false,
+        "Product_Group_Name": false,
+        "__v": false
+      })
+      .then((result) => {
+        result = JSON.parse(JSON.stringify(result));
+        
+        if (result.length === 0) {
+          return res.status(200).send({
                     message: 'No products in this product group.',
                     success: false
-                });
-            }
-
-            res.status(200).send({
-                success: true,
-                data: result
-            });
-        })
-        .catch((err) => {
-            console.log('[Error In Finding distinct Product.]', err);
-            res.status(500).send({
-                success: false,
-                message: err
-            });
-        })
-});
+              });
+        }
+  
+        res.status(200).send({
+          success: true,
+          data: result
+        });
+      })
+      .catch((err) => {
+        console.log('[Error In Finding distinct Product.]', err);
+        res.status(500).send({
+          success: false,
+          message: err
+        });
+      })
+  });
+  
+  
+  router.post('/getProductsWithFilter', function (req, res) {
+    let searchString = req.query.text;
+    
+    let filter = {
+    };
+    
+    if (searchString) {
+      let regex = new RegExp(req.query.text, 'i')
+      filter['$or'] = [
+        { NOBB: regex },
+        { Description: regex },
+        { Description_2: regex },
+        { Storageunit: regex },
+        { Billingunit: regex },
+        { Product_Category_Name: regex },
+        { Product_Group_Name: regex },
+        { Product_Name: regex }
+      ]
+    }
+  
+    DB
+      .ProductSchema
+      .find(filter,{
+        "Product_Category_Code": false,
+          "Product_Category_Name": false,
+        "Product_Group": false,
+        "Product_Group_Name": false,
+        "__v": false
+      })
+      .then((result) => {
+        result = JSON.parse(JSON.stringify(result));
+        
+        if (result.length === 0) {
+          return res.status(200).send({
+                    message: 'No products matching to your query found.',
+                    success: false
+              });
+        }
+  
+        res.status(200).send({
+          success: true,
+          data: result
+        });
+      })
+      .catch((err) => {
+        console.log('[Error In Finding distinct Product.]', err);
+        res.status(500).send({
+          success: false,
+          message: err
+        });
+      })
+  });
 
 module.exports = router;
